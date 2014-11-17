@@ -1,0 +1,463 @@
+Enter file contents here@@ -0,0 +1,462 @@ 
+ 1 +{ 
+ 2 + "metadata": { 
+ 3 +  "name": "", 
+ 4 +  "signature": "sha256:932094c67cf0e47f4d825c8f1cb2be8b0c490426acc8d8840ab4479e47e4954f" 
+ 5 + }, 
+ 6 + "nbformat": 3, 
+ 7 + "nbformat_minor": 0, 
+ 8 + "worksheets": [ 
+ 9 +  { 
+ 10 +   "cells": [ 
+ 11 +    { 
+ 12 +     "cell_type": "code", 
+ 13 +     "collapsed": false, 
+ 14 +     "input": [ 
+ 15 +      "from __future__ import division\n", 
+ 16 +      "import numpy as np\n", 
+ 17 +      "import quantecon as qe" 
+ 18 +     ], 
+ 19 +     "language": "python", 
+ 20 +     "metadata": {}, 
+ 21 +     "outputs": [] 
+ 22 +    }, 
+ 23 +    { 
+ 24 +     "cell_type": "heading", 
+ 25 +     "level": 1, 
+ 26 +     "metadata": {}, 
+ 27 +     "source": [ 
+ 28 +      "Economic Dynamics, Chapter 4: Exercises" 
+ 29 +     ] 
+ 30 +    }, 
+ 31 +    { 
+ 32 +     "cell_type": "markdown", 
+ 33 +     "metadata": {}, 
+ 34 +     "source": [ 
+ 35 +      "Exercises using Hamilton's Markov chain:" 
+ 36 +     ] 
+ 37 +    }, 
+ 38 +    { 
+ 39 +     "cell_type": "code", 
+ 40 +     "collapsed": false, 
+ 41 +     "input": [ 
+ 42 +      "P = [[0.971, 0.029, 0    ],\n", 
+ 43 +      "     [0.145, 0.778, 0.077],\n", 
+ 44 +      "     [0    , 0.508, 0.492]]\n", 
+ 45 +      "mc_H = qe.MarkovChain(P)" 
+ 46 +     ], 
+ 47 +     "language": "python", 
+ 48 +     "metadata": {}, 
+ 49 +     "outputs": [] 
+ 50 +    }, 
+ 51 +    { 
+ 52 +     "cell_type": "code", 
+ 53 +     "collapsed": false, 
+ 54 +     "input": [ 
+ 55 +      "mc_H.P" 
+ 56 +     ], 
+ 57 +     "language": "python", 
+ 58 +     "metadata": {}, 
+ 59 +     "outputs": [] 
+ 60 +    }, 
+ 61 +    { 
+ 62 +     "cell_type": "code", 
+ 63 +     "collapsed": false, 
+ 64 +     "input": [ 
+ 65 +      "states = {'NG': 0, 'MR': 1, 'SR': 2}" 
+ 66 +     ], 
+ 67 +     "language": "python", 
+ 68 +     "metadata": {}, 
+ 69 +     "outputs": [] 
+ 70 +    }, 
+ 71 +    { 
+ 72 +     "cell_type": "heading", 
+ 73 +     "level": 2, 
+ 74 +     "metadata": {}, 
+ 75 +     "source": [ 
+ 76 +      "4.2 Finite State Markov Chains" 
+ 77 +     ] 
+ 78 +    }, 
+ 79 +    { 
+ 80 +     "cell_type": "heading", 
+ 81 +     "level": 3, 
+ 82 +     "metadata": {}, 
+ 83 +     "source": [ 
+ 84 +      "4.2.2 Marginal Distributions" 
+ 85 +     ] 
+ 86 +    }, 
+ 87 +    { 
+ 88 +     "cell_type": "heading", 
+ 89 +     "level": 4, 
+ 90 +     "metadata": {}, 
+ 91 +     "source": [ 
+ 92 +      "Exercise 4.2.3" 
+ 93 +     ] 
+ 94 +    }, 
+ 95 +    { 
+ 96 +     "cell_type": "markdown", 
+ 97 +     "metadata": {}, 
+ 98 +     "source": [ 
+ 99 +      "Let us use the following function from the previous exercise set:" 
+ 100 +     ] 
+ 101 +    }, 
+ 102 +    { 
+ 103 +     "cell_type": "code", 
+ 104 +     "collapsed": false, 
+ 105 +     "input": [ 
+ 106 +      "def cross_sectional_dist(mc, init, T, num_reps=100):\n", 
+ 107 +      "    \"\"\"\n", 
+ 108 +      "    Return a distribution of visits at time T across num_reps sample paths\n", 
+ 109 +      "    of mc with an initial state init.\n", 
+ 110 +      "    \n", 
+ 111 +      "    \"\"\"\n", 
+ 112 +      "    x = np.empty(num_reps, dtype=int)\n", 
+ 113 +      "    for i in range(num_reps):\n", 
+ 114 +      "        x[i] = mc.simulate(init=init, sample_size=T+1)[-1]\n", 
+ 115 +      "    bins = np.arange(mc.n+1)\n", 
+ 116 +      "    hist, bin_edges = np.histogram(x, bins=bins)\n", 
+ 117 +      "    dist = hist/len(x)\n", 
+ 118 +      "    return dist" 
+ 119 +     ], 
+ 120 +     "language": "python", 
+ 121 +     "metadata": {}, 
+ 122 +     "outputs": [] 
+ 123 +    }, 
+ 124 +    { 
+ 125 +     "cell_type": "code", 
+ 126 +     "collapsed": false, 
+ 127 +     "input": [ 
+ 128 +      "psi = [0, 0, 1]\n", 
+ 129 +      "psi_10 = cross_sectional_dist(mc_H, init=psi, T=10)\n", 
+ 130 +      "print psi_10" 
+ 131 +     ], 
+ 132 +     "language": "python", 
+ 133 +     "metadata": {}, 
+ 134 +     "outputs": [] 
+ 135 +    }, 
+ 136 +    { 
+ 137 +     "cell_type": "code", 
+ 138 +     "collapsed": false, 
+ 139 +     "input": [ 
+ 140 +      "psi_10[states['NG']]" 
+ 141 +     ], 
+ 142 +     "language": "python", 
+ 143 +     "metadata": {}, 
+ 144 +     "outputs": [] 
+ 145 +    }, 
+ 146 +    { 
+ 147 +     "cell_type": "heading", 
+ 148 +     "level": 3, 
+ 149 +     "metadata": {}, 
+ 150 +     "source": [ 
+ 151 +      "4.2.3 Other Identities" 
+ 152 +     ] 
+ 153 +    }, 
+ 154 +    { 
+ 155 +     "cell_type": "heading", 
+ 156 +     "level": 4, 
+ 157 +     "metadata": {}, 
+ 158 +     "source": [ 
+ 159 +      "Exercise 4.2.12" 
+ 160 +     ] 
+ 161 +    }, 
+ 162 +    { 
+ 163 +     "cell_type": "code", 
+ 164 +     "collapsed": false, 
+ 165 +     "input": [ 
+ 166 +      "profits = [1000, 0, -1000]" 
+ 167 +     ], 
+ 168 +     "language": "python", 
+ 169 +     "metadata": {}, 
+ 170 +     "outputs": [] 
+ 171 +    }, 
+ 172 +    { 
+ 173 +     "cell_type": "code", 
+ 174 +     "collapsed": false, 
+ 175 +     "input": [ 
+ 176 +      "t = 5\n", 
+ 177 +      "exp_profits_vec = np.linalg.matrix_power(mc_H.P, t).dot(profits)\n", 
+ 178 +      "print exp_profits_vec" 
+ 179 +     ], 
+ 180 +     "language": "python", 
+ 181 +     "metadata": {}, 
+ 182 +     "outputs": [] 
+ 183 +    }, 
+ 184 +    { 
+ 185 +     "cell_type": "code", 
+ 186 +     "collapsed": false, 
+ 187 +     "input": [ 
+ 188 +      "exp_profits_vec[states['SR']]" 
+ 189 +     ], 
+ 190 +     "language": "python", 
+ 191 +     "metadata": {}, 
+ 192 +     "outputs": [] 
+ 193 +    }, 
+ 194 +    { 
+ 195 +     "cell_type": "heading", 
+ 196 +     "level": 4, 
+ 197 +     "metadata": {}, 
+ 198 +     "source": [ 
+ 199 +      "Exercise 4.2.13" 
+ 200 +     ] 
+ 201 +    }, 
+ 202 +    { 
+ 203 +     "cell_type": "code", 
+ 204 +     "collapsed": false, 
+ 205 +     "input": [], 
+ 206 +     "language": "python", 
+ 207 +     "metadata": {}, 
+ 208 +     "outputs": [] 
+ 209 +    }, 
+ 210 +    { 
+ 211 +     "cell_type": "heading", 
+ 212 +     "level": 4, 
+ 213 +     "metadata": {}, 
+ 214 +     "source": [ 
+ 215 +      "Exercise 4.2.14" 
+ 216 +     ] 
+ 217 +    }, 
+ 218 +    { 
+ 219 +     "cell_type": "code", 
+ 220 +     "collapsed": false, 
+ 221 +     "input": [], 
+ 222 +     "language": "python", 
+ 223 +     "metadata": {}, 
+ 224 +     "outputs": [] 
+ 225 +    }, 
+ 226 +    { 
+ 227 +     "cell_type": "heading", 
+ 228 +     "level": 3, 
+ 229 +     "metadata": {}, 
+ 230 +     "source": [ 
+ 231 +      "4.2.4 Constructing Joint Distributions" 
+ 232 +     ] 
+ 233 +    }, 
+ 234 +    { 
+ 235 +     "cell_type": "heading", 
+ 236 +     "level": 4, 
+ 237 +     "metadata": {}, 
+ 238 +     "source": [ 
+ 239 +      "Exercise 4.2.15" 
+ 240 +     ] 
+ 241 +    }, 
+ 242 +    { 
+ 243 +     "cell_type": "code", 
+ 244 +     "collapsed": false, 
+ 245 +     "input": [], 
+ 246 +     "language": "python", 
+ 247 +     "metadata": {}, 
+ 248 +     "outputs": [] 
+ 249 +    }, 
+ 250 +    { 
+ 251 +     "cell_type": "heading", 
+ 252 +     "level": 4, 
+ 253 +     "metadata": {}, 
+ 254 +     "source": [ 
+ 255 +      "Exercise 4.2.16" 
+ 256 +     ] 
+ 257 +    }, 
+ 258 +    { 
+ 259 +     "cell_type": "code", 
+ 260 +     "collapsed": false, 
+ 261 +     "input": [], 
+ 262 +     "language": "python", 
+ 263 +     "metadata": {}, 
+ 264 +     "outputs": [] 
+ 265 +    }, 
+ 266 +    { 
+ 267 +     "cell_type": "heading", 
+ 268 +     "level": 4, 
+ 269 +     "metadata": {}, 
+ 270 +     "source": [ 
+ 271 +      "Exercise 4.2.18" 
+ 272 +     ] 
+ 273 +    }, 
+ 274 +    { 
+ 275 +     "cell_type": "code", 
+ 276 +     "collapsed": false, 
+ 277 +     "input": [], 
+ 278 +     "language": "python", 
+ 279 +     "metadata": {}, 
+ 280 +     "outputs": [] 
+ 281 +    }, 
+ 282 +    { 
+ 283 +     "cell_type": "heading", 
+ 284 +     "level": 4, 
+ 285 +     "metadata": {}, 
+ 286 +     "source": [ 
+ 287 +      "Exercise 4.2.19" 
+ 288 +     ] 
+ 289 +    }, 
+ 290 +    { 
+ 291 +     "cell_type": "code", 
+ 292 +     "collapsed": false, 
+ 293 +     "input": [], 
+ 294 +     "language": "python", 
+ 295 +     "metadata": {}, 
+ 296 +     "outputs": [] 
+ 297 +    }, 
+ 298 +    { 
+ 299 +     "cell_type": "heading", 
+ 300 +     "level": 4, 
+ 301 +     "metadata": {}, 
+ 302 +     "source": [ 
+ 303 +      "Exercise 4.2.20" 
+ 304 +     ] 
+ 305 +    }, 
+ 306 +    { 
+ 307 +     "cell_type": "code", 
+ 308 +     "collapsed": false, 
+ 309 +     "input": [], 
+ 310 +     "language": "python", 
+ 311 +     "metadata": {}, 
+ 312 +     "outputs": [] 
+ 313 +    }, 
+ 314 +    { 
+ 315 +     "cell_type": "heading", 
+ 316 +     "level": 4, 
+ 317 +     "metadata": {}, 
+ 318 +     "source": [ 
+ 319 +      "Exercise 4.2.22" 
+ 320 +     ] 
+ 321 +    }, 
+ 322 +    { 
+ 323 +     "cell_type": "code", 
+ 324 +     "collapsed": false, 
+ 325 +     "input": [], 
+ 326 +     "language": "python", 
+ 327 +     "metadata": {}, 
+ 328 +     "outputs": [] 
+ 329 +    }, 
+ 330 +    { 
+ 331 +     "cell_type": "heading", 
+ 332 +     "level": 4, 
+ 333 +     "metadata": {}, 
+ 334 +     "source": [ 
+ 335 +      "Exercise 4.2.23" 
+ 336 +     ] 
+ 337 +    }, 
+ 338 +    { 
+ 339 +     "cell_type": "code", 
+ 340 +     "collapsed": false, 
+ 341 +     "input": [], 
+ 342 +     "language": "python", 
+ 343 +     "metadata": {}, 
+ 344 +     "outputs": [] 
+ 345 +    }, 
+ 346 +    { 
+ 347 +     "cell_type": "heading", 
+ 348 +     "level": 2, 
+ 349 +     "metadata": {}, 
+ 350 +     "source": [ 
+ 351 +      "4.3 Stability of Finite State MCs" 
+ 352 +     ] 
+ 353 +    }, 
+ 354 +    { 
+ 355 +     "cell_type": "heading", 
+ 356 +     "level": 3, 
+ 357 +     "metadata": {}, 
+ 358 +     "source": [ 
+ 359 +      "4.3.1 Stationary Distributions" 
+ 360 +     ] 
+ 361 +    }, 
+ 362 +    { 
+ 363 +     "cell_type": "heading", 
+ 364 +     "level": 4, 
+ 365 +     "metadata": {}, 
+ 366 +     "source": [ 
+ 367 +      "Exercise 4.3.9" 
+ 368 +     ] 
+ 369 +    }, 
+ 370 +    { 
+ 371 +     "cell_type": "code", 
+ 372 +     "collapsed": false, 
+ 373 +     "input": [], 
+ 374 +     "language": "python", 
+ 375 +     "metadata": {}, 
+ 376 +     "outputs": [] 
+ 377 +    }, 
+ 378 +    { 
+ 379 +     "cell_type": "heading", 
+ 380 +     "level": 4, 
+ 381 +     "metadata": {}, 
+ 382 +     "source": [ 
+ 383 +      "Exercise 4.3.10" 
+ 384 +     ] 
+ 385 +    }, 
+ 386 +    { 
+ 387 +     "cell_type": "code", 
+ 388 +     "collapsed": false, 
+ 389 +     "input": [], 
+ 390 +     "language": "python", 
+ 391 +     "metadata": {}, 
+ 392 +     "outputs": [] 
+ 393 +    }, 
+ 394 +    { 
+ 395 +     "cell_type": "heading", 
+ 396 +     "level": 3, 
+ 397 +     "metadata": {}, 
+ 398 +     "source": [ 
+ 399 +      "4.3.3 Stability" 
+ 400 +     ] 
+ 401 +    }, 
+ 402 +    { 
+ 403 +     "cell_type": "heading", 
+ 404 +     "level": 4, 
+ 405 +     "metadata": {}, 
+ 406 +     "source": [ 
+ 407 +      "Exercise 4.3.27" 
+ 408 +     ] 
+ 409 +    }, 
+ 410 +    { 
+ 411 +     "cell_type": "code", 
+ 412 +     "collapsed": false, 
+ 413 +     "input": [], 
+ 414 +     "language": "python", 
+ 415 +     "metadata": {}, 
+ 416 +     "outputs": [] 
+ 417 +    }, 
+ 418 +    { 
+ 419 +     "cell_type": "heading", 
+ 420 +     "level": 3, 
+ 421 +     "metadata": {}, 
+ 422 +     "source": [ 
+ 423 +      "4.3.4 The Law of Large Numbers" 
+ 424 +     ] 
+ 425 +    }, 
+ 426 +    { 
+ 427 +     "cell_type": "heading", 
+ 428 +     "level": 4, 
+ 429 +     "metadata": {}, 
+ 430 +     "source": [ 
+ 431 +      "Exercise 4.3.34" 
+ 432 +     ] 
+ 433 +    }, 
+ 434 +    { 
+ 435 +     "cell_type": "code", 
+ 436 +     "collapsed": false, 
+ 437 +     "input": [], 
+ 438 +     "language": "python", 
+ 439 +     "metadata": {}, 
+ 440 +     "outputs": [] 
+ 441 +    }, 
+ 442 +    { 
+ 443 +     "cell_type": "heading", 
+ 444 +     "level": 4, 
+ 445 +     "metadata": {}, 
+ 446 +     "source": [ 
+ 447 +      "Exercise 4.3.36" 
+ 448 +     ] 
+ 449 +    }, 
+ 450 +    { 
+ 451 +     "cell_type": "code", 
+ 452 +     "collapsed": false, 
+ 453 +     "input": [], 
+ 454 +     "language": "python", 
+ 455 +     "metadata": {}, 
+ 456 +     "outputs": [] 
+ 457 +    } 
+ 458 +   ], 
+ 459 +   "metadata": {} 
+ 460 +  } 
+ 461 + ] 
+ 462 +} 
