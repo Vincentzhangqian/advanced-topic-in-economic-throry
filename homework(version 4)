@@ -1,0 +1,506 @@
+{
+ "metadata": {
+  "name": "",
+  "signature": "sha256:b1b04d6abe2476e15439fe2b853b75c83a0c835e25ca308729104737cbd6589a"
+ },
+ "nbformat": 3,
+ "nbformat_minor": 0,
+ "worksheets": [
+  {
+   "cells": [
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "from __future__ import division\n",
+      "import numpy as np\n",
+      "import quantecon as qe"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 1,
+     "metadata": {},
+     "source": [
+      "Economic Dynamics, Chapter 4: Exercises"
+     ]
+    },
+    {
+     "cell_type": "markdown",
+     "metadata": {},
+     "source": [
+      "Exercises using Hamilton's Markov chain:"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "P = [[0.971, 0.029, 0    ],\n",
+      "     [0.145, 0.778, 0.077],\n",
+      "     [0    , 0.508, 0.492]]\n",
+      "mc_H = qe.MarkovChain(P)"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "mc_H.P"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "states = {'NG': 0, 'MR': 1, 'SR': 2}"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 2,
+     "metadata": {},
+     "source": [
+      "4.2 Finite State Markov Chains"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 3,
+     "metadata": {},
+     "source": [
+      "4.2.2 Marginal Distributions"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.3"
+     ]
+    },
+    {
+     "cell_type": "markdown",
+     "metadata": {},
+     "source": [
+      "Let us use the following function from the previous exercise set:"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "def cross_sectional_dist(mc, init, T, num_reps=100):\n",
+      "    \"\"\"\n",
+      "    Return a distribution of visits at time T across num_reps sample paths\n",
+      "    of mc with an initial state init.\n",
+      "    \n",
+      "    \"\"\"\n",
+      "    x = np.empty(num_reps, dtype=int)\n",
+      "    for i in range(num_reps):\n",
+      "        x[i] = mc.simulate(init=init, sample_size=T+1)[-1]\n",
+      "    bins = np.arange(mc.n+1)\n",
+      "    hist, bin_edges = np.histogram(x, bins=bins)\n",
+      "    dist = hist/len(x)\n",
+      "    return dist"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "psi = [0, 0, 1]\n",
+      "psi_10 = cross_sectional_dist(mc_H, init=psi, T=10)\n",
+      "print psi_10"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "psi_10[states['NG']]"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 3,
+     "metadata": {},
+     "source": [
+      "4.2.3 Other Identities"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.12"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "profits = [1000, 0, -1000]"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "t = 5\n",
+      "psi_NG = [1, 0, 0]\n",
+      "x = psi_NG\n",
+      "y = np.linalg.matrix_power(mc_H.P, t)\n",
+      "z = np.dot(x, y)\n",
+      "exp_profits_vec = np.linalg.matrix_power(mc_H.P, t).dot(profits)\n",
+      "print exp_profits_vec"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "exp_profits_vec[states['SR']]"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.13"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "expect_profit = []\n",
+      "\n",
+      "for init in [[1, 0, 0], [0, 1, 0], [0, 0, 1]]:\n",
+      "    mar5_p = marginal(1000, init)\n",
+      "    profit = [1000, 0 , -1000]\n",
+      "    expect_profit.append(np.dot(mar5_p, profit)) \n",
+      "        \n",
+      "print expect_profit"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.14"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "t = 100\n",
+      "\n",
+      "psi_sto = [0.3, 0.3, 0.4]\n",
+      "x = psi_sto\n",
+      "y = np.linalg.matrix_power(mc_H.P, t)\n",
+      "z = np.dot(x, y)\n",
+      "exp_profits = np.dot(z, profits)\n",
+      "print exp_profits"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 3,
+     "metadata": {},
+     "source": [
+      "4.2.4 Constructing Joint Distributions"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.15"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "def path_prob(p, psi, X):\n",
+      "    prob = psi[X[0]]\n",
+      "    for t in range(len(X) - 1):\n",
+      "        prob = prob * p[X[t]][X[t+1]]\n",
+      "    return prob\n",
+      "\n",
+      "pH = ((0.971, 0.029, 0.000),\n",
+      "      (0.145, 0.778, 0.077),\n",
+      "      (0.000, 0.508, 0.492))\n",
+      "X = (0, 1, 0)\n",
+      "psi = (0.2, 0.2, 0.6)\n",
+      "\n",
+      "path_prob(pH, psi, X)"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.16"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.18"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [
+      "allpaths = []\n",
+      "for each in [[0], [1], [2]]:\n",
+      "    for each1 in [[0], [1], [2]]:\n",
+      "        for each2 in [[0], [1], [2]]:\n",
+      "            allpaths.append(each + each1 + each2)\n",
+      "            \n",
+      "print allpaths"
+     ],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.19"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.20"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.22"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.2.23"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 2,
+     "metadata": {},
+     "source": [
+      "4.3 Stability of Finite State MCs"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 3,
+     "metadata": {},
+     "source": [
+      "4.3.1 Stationary Distributions"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.3.9"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.3.10"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 3,
+     "metadata": {},
+     "source": [
+      "4.3.3 Stability"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.3.27"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 3,
+     "metadata": {},
+     "source": [
+      "4.3.4 The Law of Large Numbers"
+     ]
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.3.34"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    },
+    {
+     "cell_type": "heading",
+     "level": 4,
+     "metadata": {},
+     "source": [
+      "Exercise 4.3.36"
+     ]
+    },
+    {
+     "cell_type": "code",
+     "collapsed": false,
+     "input": [],
+     "language": "python",
+     "metadata": {},
+     "outputs": []
+    }
+   ],
+   "metadata": {}
+  }
+ ]
+}
